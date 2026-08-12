@@ -1,6 +1,8 @@
 import torch
 import torch.nn as nn
 
+from LayerNorm import LayerNorm
+from TransformerBlock import TransformerBlock
 import cfg
 
 class TinyGPT2(nn.Module):
@@ -10,10 +12,10 @@ class TinyGPT2(nn.Module):
         self.pos_emb = nn.Embedding(cfg["context_length"], cfg["emb_dim"])
         self.drop_emb = nn.Dropout(cfg["drop_rate"])
         self.transformer_block = nn.Sequential(
-            *[DummyTransformerBlock(cfg)
+            *[TransformerBlock(cfg)
                 for _ in range(cfg["n_layers"])]
         )
-        self.final_norm = DummyLayerNorm(cfg["emb_dim"])
+        self.final_norm = LayerNorm(cfg["emb_dim"])
         self.out_head = nn.Linear(
             cfg["emb_dim"], cfg["vocab_size"], bias = False
         )
@@ -60,10 +62,15 @@ if __name__ == "__main__":
     batch.append(torch.tensor(tokenizer.encode(txt2)))
     batch = torch.stack(batch, dim=0)
     print(batch)
+    print(f"batch shape: {batch.shape}")
 
-    torch.manual_seed(123)
+    torch.manual_seed(21)
     model = TinyGPT2(cfg.GPT_CONFIG_124M)
     logits = model(batch)
-    print(f"shape: {logits.shape}")
     print(logits)
-    print(logits.shape)
+    print(f"shape: {logits.shape}")
+
+    total_params = sum(p.numel() for p in model.parameters())
+    print(f"total params: {total_params}")
+    total_size_mb = total_params * 4 / (1024 * 1024)
+    print(f"모델에 필요한 메모리 공간: {total_size_mb: .2f} MB")
