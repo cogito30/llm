@@ -3,8 +3,7 @@ import torch.nn as nn
 
 import cfg
 
-
-class DummyGPTModel(nn.Module):
+class TinyGPT2(nn.Module):
     def __init__(self, cfg):
         super().__init__()
         self.tok_emb = nn.Embedding(cfg["vocab_size"], cfg["emb_dim"])
@@ -50,8 +49,7 @@ class DummyLayerNorm(nn.Module):
 if __name__ == "__main__":
     import tiktoken
 
-    print("-----Dummy GPT Model-----")
-    model = DummyGPTModel(cfg.GPT_CONFIG_124M)
+    print("-----Tiny GPT-2 Model-----")
 
     tokenizer = tiktoken.get_encoding("gpt2")
     batch = []
@@ -60,11 +58,12 @@ if __name__ == "__main__":
 
     batch.append(torch.tensor(tokenizer.encode(txt1)))
     batch.append(torch.tensor(tokenizer.encode(txt2)))
-    
     batch = torch.stack(batch, dim=0)
     print(batch)
 
     torch.manual_seed(123)
+    model = TinyGPT2(cfg.GPT_CONFIG_124M)
     logits = model(batch)
     print(f"shape: {logits.shape}")
     print(logits)
+    print(logits.shape)
