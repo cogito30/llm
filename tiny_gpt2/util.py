@@ -13,6 +13,15 @@ def generate_text(model, idx, max_new_tokens, context_size):
 
     return idx
 
+def text_to_token_ids(text, tokenizer):
+    encoded = tokenizer.encode(text, allowed_specials={'<|endoftext|>'})
+    encoded_tensor = torch.tensor(encoded).unsqueeze(0)
+    return encoded_tensor
+
+def token_ids_to_text(token_ids, tokenizer):
+    flat = token_ids.squeeze(0).tolist()
+    return tokenizer.decode(flat)
+
 if __name__ == "__main__":
     from Tokenizer import Tokenizer
     from TinyGPT2 import TinyGPT2
@@ -34,3 +43,11 @@ if __name__ == "__main__":
     print(f"output shape: {out.shape}")
     decoded = tokenizer.decode(out.squeeze(0).tolist())
     print(f"decoded: {decoded}")
+
+    print("---Function Test---")
+    start_context = "Every effort moves you"
+
+    token_ids = generate_text(model=model, idx=text_to_token_ids(start_context, tokenizer), max_new_tokens=10, context_size=256)
+    print(f"output: {token_ids_to_text(token_ids, tokenizer)}")
+
+
