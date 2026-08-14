@@ -1,10 +1,6 @@
 import torch
 import torch.nn as nn
 
-from LayerNorm import LayerNorm
-from TransformerBlock import TransformerBlock
-import cfg
-
 class TinyGPT2(nn.Module):
     def __init__(self, cfg):
         super().__init__()
@@ -12,10 +8,10 @@ class TinyGPT2(nn.Module):
         self.pos_emb = nn.Embedding(cfg["context_length"], cfg["emb_dim"])
         self.drop_emb = nn.Dropout(cfg["drop_rate"])
         self.transformer_block = nn.Sequential(
-            *[TransformerBlock(cfg)
+            *[DummyTransformerBlock(cfg)
                 for _ in range(cfg["n_layers"])]
         )
-        self.final_norm = LayerNorm(cfg["emb_dim"])
+        self.final_norm = DummyLayerNorm(cfg["emb_dim"])
         self.out_head = nn.Linear(
             cfg["emb_dim"], cfg["vocab_size"], bias = False
         )
@@ -50,6 +46,7 @@ class DummyLayerNorm(nn.Module):
 
 if __name__ == "__main__":
     import tiktoken
+    import cfg
 
     print("-----Tiny GPT-2 Model-----")
 

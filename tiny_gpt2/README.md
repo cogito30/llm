@@ -1,34 +1,29 @@
-# Project: Tiny GPT-2 구현
+# Project: GPT-2 구현하기
 
-## 전체 과정
-1. 토크나이저 구현
+## 1단계. 텍스트 데이터 처리
+- Tokenizer 구현하기
+1) 텍스트 읽어오기
+2) 텍스트 전처리: 특수토큰, 토큰으로 나누기
+3) 어휘사전 생성하기
+4) 토큰화된 텍스트를 토큰 ID로 변환하기
 
+- Dataset && DataLoader 구현하기
+  - input && target 쌍으로 나누기
+  - sliding window 방식으로 구현하기
+  - 배치 사이에 중첩이 있으면 overfitting 증가
 
+- 단어 임베딩하기
+  - 임베딩은 LUT로 동작함을 확인하기
 
-## 1단계. 토크나이저 구현
-1. 텍스트 데이터 불러오기
-- 데이터 크기 확인 
-2. 데이터 토큰화하기
-- 특수 토큰 처리: `<unk>`, `<endoftext>`, `<bos>`, `<eos>`, `<pad>`
-3. 토큰을 토큰 ID로 변환하여 어휘사전(vocab) 생성하기
-4. Tokenizer 클래스 만들기
-5. BPE 사용하기
+- position embedding 인코딩하기
+  - 절대 위치 임베딩 사용하기
 
-## 2단계. 데이터셋 구현
-1. Dataset 클래스 만들기
-2. DataLoader 사용하기
+## 2단계. Attention 계층 구현
+- self-attention 구현하기
+1) 입력 임베딩 벡터에서 query 선택
+2) query와 입력 임베딩 벡터를 dot product해서 attention_score 구하기
+3) attention_score를 배치 정규화해서 attention_weight로 만들기
+4) attention_wieght에 각 임베딩 벡터(key)를 곱하고 더해서 context_vector 만들기
 
-## 3단계. 임베딩층 구현
-1. 임베딩 층 사용
-2. Position Embedding 만들기
-
-
-## 4단계. Attention Mechanism 구현
-1. 
-
-## 5단계. Tiny GPT-2 구현
-1. GPT 구조 잡기
-- Embedding Layer
-- Transformer Block
-- Output Layer
-2. 
+- 정규화시 attention_score를 key의 임베딩 차원의 제곱근으로 나누기
+- multi-head attention 구현하기
